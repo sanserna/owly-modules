@@ -1,0 +1,13 @@
+{
+  "apis": {
+    "smartHome": {
+      "baseURL": "http://owly-api.test",
+      "endpoints": {
+        "getProject": {
+          "method": "get",
+          "uri": "/project/{projectId}"
+        }
+      }
+    }
+  }
+}

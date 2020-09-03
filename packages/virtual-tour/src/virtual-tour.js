@@ -1,24 +1,28 @@
-import Api from '@sanserna/api-module';
+import Api, { cacheFactory } from '@sanserna/api';
 
 import mainConfig from './config/main.config.json';
 
 const api = Object.keys(mainConfig.apis).reduce((apisAcc, apiName) => {
+  const apiConfig = mainConfig.apis[apiName];
+  const { cache } = apiConfig;
+
   // eslint-disable-next-line no-param-reassign
-  apisAcc[apiName] = new Api(mainConfig.apis[apiName]);
+  apisAcc[apiName] = new Api({
+    ...apiConfig,
+    adapter: cacheFactory({
+      maxAge: cache.invalidAfter,
+      enabledByDefault: cache.enabled,
+    }),
+  });
 
   return apisAcc;
 }, {});
 
-function createVirtualTourFacadeModule(tour, params) {
-  const {
-    product,
-    companyCode,
-    projectId,
-    panoramaName,
-  } = params;
-  const panorama = tour.getMediaByName(panoramaName);
+function createVirtualTourModule(tour, params) {
+  const { product, companyCode, projectId } = params;
 
-  async function enableHotspotsByUnitStatus() {
+  async function enableHotspotsByUnitStatus({ mediaName }) {
+    const media = tour.getMediaByName(mediaName);
     const { status, data } = await api.smartHome.getProject({
       config: {
         headers: {
@@ -36,7 +40,7 @@ function createVirtualTourFacadeModule(tour, params) {
       const { items } = data;
 
       items.forEach((item) => {
-        const hotSpot = tour.getPanoramaOverlayByName(panorama, item.id);
+        const hotSpot = tour.getPanoramaOverlayByName(media, item.id);
 
         if (hotSpot) {
           hotSpot.set('enabled', item.available);
@@ -50,7 +54,7 @@ function createVirtualTourFacadeModule(tour, params) {
   };
 }
 
-export default createVirtualTourFacadeModule;
+export default createVirtualTourModule;
 
 // window.owlyVirtualTourFacade = window['owly-virtual-tour-facade'](this, {
 //   product: 'smart_home',

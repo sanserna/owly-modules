@@ -19,7 +19,7 @@
     "update:all": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
-    "@sanserna/api-module": "file:/Users/santiago/Development/personal/sanserna-modules/packages/api"
+    "@sanserna/api": "file:/Users/santiago/Development/personal/sanserna-modules/packages/api"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",

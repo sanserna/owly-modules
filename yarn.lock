@@ -1978,7 +1978,7 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@sanserna/api-module@file:/Users/santiago/Development/personal/sanserna-modules/packages/api":
+"@sanserna/api@file:/Users/santiago/Development/personal/sanserna-modules/packages/api":
   version "0.0.0"
   dependencies:
     axios "^0.20.0"

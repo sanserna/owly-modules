@@ -5,7 +5,11 @@
       "endpoints": {
         "getProject": {
           "method": "get",
-          "uri": "/project/{projectId}"
+          "uri": "/project/{projectId}",
+          "cache": {
+            "enabled": true,
+            "invalidAfter": 60000
+          }
         }
       }
     }

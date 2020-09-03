@@ -1,5 +1,5 @@
 {
-  "name": "@sanserna/virtual-tour-module",
+  "name": "@owly/virtual-tour",
   "version": "0.0.0",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "eslint ./{src,__tests__}/**/*.js"
   },
   "dependencies": {
-    "@sanserna/api-module": "file:/Users/santiago/Development/personal/sanserna-modules/packages/api"
+    "@sanserna/api": "file:/Users/santiago/Development/personal/sanserna-modules/packages/api"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",

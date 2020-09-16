@@ -1,8 +1,26 @@
-const { resolve } = require('path');
+const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-module.exports = {
-  context: resolve(__dirname, 'src'),
+const getEnvConfig = (env) => {
+  const currentPath = path.join(__dirname);
+  const basePath = `${currentPath}/.env`;
+  const envPath = `${basePath}.${env.ENVIRONMENT}`;
+  const fileEnv = dotenv.config({
+    path: fs.existsSync(envPath) ? envPath : basePath,
+  }).parsed;
+
+  return Object.keys(fileEnv).reduce((prev, next) => {
+    // eslint-disable-next-line no-param-reassign
+    prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
+    return prev;
+  }, {});
+};
+
+module.exports = (env) => ({
+  context: path.resolve(__dirname, 'src'),
   entry: {
     app: './index.js',
   },
@@ -10,13 +28,14 @@ module.exports = {
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
     }),
+    new webpack.EnvironmentPlugin(getEnvConfig(env)),
   ],
   output: {
-    filename: '[name].js',
+    filename: 'owly-virtual-tour.js',
     libraryTarget: 'umd',
-    library: 'owlyVirtualTour',
+    library: 'owlyVirtualTourModule',
     umdNamedDefine: true,
-    path: resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
@@ -33,4 +52,4 @@ module.exports = {
       },
     ],
   },
-};
+});

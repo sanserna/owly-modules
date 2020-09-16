@@ -1,10 +1,10 @@
 import Api, { cacheFactory } from '@sanserna/api';
 
-import mainConfig from './config/main.config.json';
+import mainConfig from './config/main.config';
 
 const api = Object.keys(mainConfig.apis).reduce((apisAcc, apiName) => {
   const apiConfig = mainConfig.apis[apiName];
-  const { cache } = apiConfig;
+  const { cache = {} } = apiConfig;
 
   // eslint-disable-next-line no-param-reassign
   apisAcc[apiName] = new Api({
@@ -18,12 +18,19 @@ const api = Object.keys(mainConfig.apis).reduce((apisAcc, apiName) => {
   return apisAcc;
 }, {});
 
+function normalizeData(data, idAttribute = 'id') {
+  return data.reduce((acum, current) => ({
+    ...acum,
+    [current[idAttribute]]: { ...current },
+  }), {});
+}
+
 function createVirtualTourModule(tour, params) {
   const { product, companyCode, projectId } = params;
 
   async function enableHotspotsByUnitStatus({ mediaName }) {
     const media = tour.getMediaByName(mediaName);
-    const { status, data } = await api.smartHome.getProject({
+    const { status, data } = await api.owly.getProject({
       config: {
         headers: {
           product,
@@ -31,20 +38,20 @@ function createVirtualTourModule(tour, params) {
         },
       },
       urlParams: {
-        companyCode,
         projectId,
       },
     });
 
     if (status === 200) {
-      const { items } = data;
+      const normalizedItems = normalizeData(data.items);
+      const mediaOverlays = media.get('overlays') || [];
 
-      items.forEach((item) => {
-        const hotSpot = tour.getPanoramaOverlayByName(media, item.id);
+      mediaOverlays.forEach((hotSpot) => {
+        const hotSpotData = hotSpot.get('data') || {};
+        const itemId = hotSpotData.label;
+        const item = normalizedItems[itemId] || {};
 
-        if (hotSpot) {
-          hotSpot.set('enabled', item.available);
-        }
+        hotSpot.set('rollOverDisplay', Boolean(item.available));
       });
     }
   }
@@ -55,10 +62,3 @@ function createVirtualTourModule(tour, params) {
 }
 
 export default createVirtualTourModule;
-
-// window.owlyVirtualTourFacade = window['owly-virtual-tour-facade'](this, {
-//   product: 'smart_home',
-//   companyCode: '70c1da67',
-//   projectId: '45db46f2',
-//   panoramaName: 'panorama1',
-// });

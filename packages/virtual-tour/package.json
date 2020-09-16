@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack",
+    "dev": "webpack --env.ENVIRONMENT=development --mode=development --watch",
+    "build": "webpack --env.ENVIRONMENT=production --mode=production",
     "test:unit": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint ./{src,__tests__}/**/*.js"

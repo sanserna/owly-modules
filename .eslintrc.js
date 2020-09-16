@@ -30,12 +30,14 @@ module.exports = {
       files: [
         '**/*.test.js',
         '**/*.spec.js',
+        '**/webpack.config.js',
       ],
       rules: {
         'import/no-extraneous-dependencies': ['error', {
           devDependencies: [
             '**/*.test.js',
             '**/*.spec.js',
+            '**/webpack.config.js',
           ],
           packageDir: path.join(__dirname, './'),
         }],

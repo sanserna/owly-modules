@@ -28,7 +28,7 @@ module.exports = (env) => ({
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
     }),
-    new webpack.EnvironmentPlugin(getEnvConfig(env)),
+    new webpack.DefinePlugin(getEnvConfig(env)),
   ],
   output: {
     filename: 'owly-virtual-tour.js',
